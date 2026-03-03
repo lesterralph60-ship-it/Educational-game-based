@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Ultimate Mixed Grammar</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #6dd5ed, #fbd786);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    width: 550px;
+    text-align: center;
+}
+
+h1 { margin-bottom: 10px; }
+
+#stats {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+#progressBar {
+    width: 100%;
+    background: #ddd;
+    border-radius: 20px;
+    margin: 10px 0;
+}
+
+#progress {
+    height: 15px;
+    width: 0%;
+    background: #4CAF50;
+    border-radius: 20px;
+}
+
+#sentence {
+    font-size: 22px;
+    margin: 20px 0;
+}
+
+button {
+    padding: 10px 15px;
+    margin: 5px;
+    font-size: 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.grammar-btn { background: #2196f3; color: white; }
+.grammar-btn:hover { opacity: 0.85; }
+
+#result {
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.restart-btn {
+    margin-top: 15px;
+    background: #333;
+    color: white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🎮 Ultimate Mixed Grammar</h1>
+
+<div id="stats"></div>
+
+<div id="progressBar">
+    <div id="progress"></div>
+</div>
+
+<p id="sentence"></p>
+
+<div>
+    <button class="grammar-btn" onclick="checkAnswer('noun')">Noun</button>
+    <button class="grammar-btn" onclick="checkAnswer('pronoun')">Pronoun</button>
+    <button class="grammar-btn" onclick="checkAnswer('adjective')">Adjective</button>
+    <button class="grammar-btn" onclick="checkAnswer('verb')">Verb</button>
+</div>
+
+<p id="result"></p>
+
+<button class="restart-btn" onclick="restartGame()">Restart Game</button>
+
+</div>
+
+<script>
+
+const questions = [
+{
+    sentence: "The <span style='color:red'>cat</span> is sleeping.",
+    answer: "noun"
+},
+{
+    sentence: "<span style='color:red'>They</span> are my friends.",
+    answer: "pronoun"
+},
+{
+    sentence: "She has a <span style='color:red'>beautiful</span> dress.",
+    answer: "adjective"
+},
+{
+    sentence: "We <span style='color:red'>run</span> every morning.",
+    answer: "verb"
+},
+{
+    sentence: "The <span style='color:red'>big</span> house is mine.",
+    answer: "adjective"
+},
+{
+    sentence: "<span style='color:red'>He</span> plays soccer.",
+    answer: "pronoun"
+}
+
+];
+
+let currentIndex = 0;
+let score = 0;
+let lives = 3;
+let gameActive = true;
+
+function loadQuestion() {
+
+    if (currentIndex >= questions.length) {
+        gameActive = false;
+        document.getElementById("sentence").innerHTML = "🏆 You completed the game!";
+        document.getElementById("result").innerHTML = "Final Score: " + score;
+        return;
+    }
+
+    document.getElementById("sentence").innerHTML = questions[currentIndex].sentence;
+    document.getElementById("result").innerHTML = "";
+    updateStats();
+    updateProgress();
+}
+
+function checkAnswer(choice) {
+
+    if (!gameActive) return;
+
+    if (choice === questions[currentIndex].answer) {
+        score += 10;
+        document.getElementById("result").innerHTML = "✅ Galing mo, dahil diyan meron kang hehe!";
+        document.getElementById("result").style.color = "green";
+        currentIndex++;
+        setTimeout(loadQuestion, 800);
+    } else {
+        lives--;
+        document.getElementById("result").innerHTML = "❌ Walang perpekto, kaya galingan mo pa lalo! Correct answer: " + questions[currentIndex].answer;
+        document.getElementById("result").style.color = "red";
+
+        if (lives === 0) {
+            gameActive = false;
+            document.getElementById("sentence").innerHTML = "💀 Learn more, bro/sis!";
+            document.getElementById("result").innerHTML = "Final Score: " + score;
+        }
+    }
+
+    updateStats();
+}
+
+function updateStats() {
+    document.getElementById("stats").innerHTML =
+        "⭐ Score: " + score +
+        " | ❤️ Lives: " + lives +
+        " | Question: " + (currentIndex + 1) + "/" + questions.length;
+}
+
+function updateProgress() {
+    let percent = (currentIndex / questions.length) * 100;
+    document.getElementById("progress").style.width = percent + "%";
+}
+
+function restartGame() {
+    currentIndex = 0;
+    score = 0;
+    lives = 3;
+    gameActive = true;
+    loadQuestion();
+}
+
+loadQuestion();
+
+</script>
+
+</body>
+</html>
