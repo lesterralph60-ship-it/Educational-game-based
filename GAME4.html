@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Smart Quiz Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: white;
+        }
+
+        .quiz-box {
+            background: rgba(0, 0, 0, 0.7);
+            width: 500px;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        #question {
+            font-size: 18px;
+            margin: 20px 0;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .correct {
+            background-color: #28a745 !important;
+        }
+
+        .wrong {
+            background-color: #dc3545 !important;
+        }
+
+        #progress-container {
+            background: #444;
+            border-radius: 10px;
+            height: 10px;
+            margin: 15px 0;
+        }
+
+        #progress-bar {
+            background: #00ffcc;
+            height: 10px;
+            width: 0%;
+            border-radius: 10px;
+        }
+
+        #info {
+            margin-top: 10px;
+        }
+
+        #restartBtn {
+            margin-top: 15px;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-box">
+    <h1>📚 Smart Quiz</h1>
+    <div id="progress-container">
+        <div id="progress-bar" style="width: 0%;"></div>
+    </div>
+
+    <div id="question">Which organelle is known as the powerhouse of the cell?</div>
+    <div id="answers"><button class="btn">Nucleus</button><button class="btn">Ribosome</button><button class="btn">Mitochondrion</button><button class="btn">Golgi apparatus</button></div>
+
+    <div id="info">
+        <p>Score: <span id="score">0</span></p>
+        <p>Question: <span id="qNumber">1</span>/5</p>
+    </div>
+
+    <button id="restartBtn" onclick="startGame()">Restart</button>
+</div>
+
+<script>
+const questions = [
+    
+    {
+        question: "Which organelle is known as the powerhouse of the cell?",
+        options: ["Nucleus", "Ribosome", "Mitochondrion", "Golgi apparatus"],
+        answer: "Mitochondrion"
+    },
+    {
+        question: "What is the value of x in 5x = 25?",
+        options: ["3", "4", "5", "6"],
+        answer: "5"
+    },
+    {
+        question: "Who wrote 'Hamlet'?",
+        options: ["Charles Dickens", "William Shakespeare", "Jane Austen", "Mark Twain"],
+        answer: "William Shakespeare"
+    },
+    {
+        question: "Which planet is known as the Red Planet?",
+        options: ["Earth", "Mars", "Jupiter", "Venus"],
+        answer: "Mars"
+    },
+    {
+        question: "What type of government has a king or queen as head of state?",
+        options: ["Democracy", "Republic", "Monarchy", "Dictatorship"],
+        answer: "Monarchy"
+    }
+];
+
+let currentIndex = 0;
+let score = 0;
+
+function startGame() {
+    currentIndex = 0;
+    score = 0;
+    document.getElementById("score").innerText = score;
+    document.getElementById("qNumber").innerText = 1;
+    document.getElementById("progress-bar").style.width = "0%";
+    showQuestion();
+}
+
+function showQuestion() {
+    if (currentIndex >= questions.length) {
+        document.getElementById("question").innerHTML = "🎉 Quiz Finished! Final Score: " + score;
+        document.getElementById("answers").innerHTML = "";
+        return;
+    }
+
+    const q = questions[currentIndex];
+    document.getElementById("question").innerText = q.question;
+    document.getElementById("qNumber").innerText = currentIndex + 1;
+
+    const answersDiv = document.getElementById("answers");
+    answersDiv.innerHTML = "";
+
+    q.options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.innerText = option;
+        btn.classList.add("btn");
+        btn.onclick = () => checkAnswer(btn, option);
+        answersDiv.appendChild(btn);
+    });
+
+    updateProgress();
+}
+
+function checkAnswer(button, selected) {
+    const correctAnswer = questions[currentIndex].answer;
+    const buttons = document.querySelectorAll(".btn");
+
+    buttons.forEach(btn => btn.disabled = true);
+
+    if (selected === correctAnswer) {
+        button.classList.add("correct");
+        score++;
+        document.getElementById("score").innerText = score;
+    } else {
+        button.classList.add("wrong");
+        buttons.forEach(btn => {
+            if (btn.innerText === correctAnswer) {
+                btn.classList.add("correct");
+            }
+        });
+    }
+
+    setTimeout(() => {
+        currentIndex++;
+        showQuestion();
+    }, 1000);
+}
+
+function updateProgress() {
+    const progressPercent = (currentIndex / questions.length) * 100;
+    document.getElementById("progress-bar").style.width = progressPercent + "%";
+}
+
+startGame();
+</script>
+
+
+</body></html>
