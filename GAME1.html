@@ -1,0 +1,226 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ultimate Guess The Word</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #6dd5ed, #fbd786);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+
+  .container {
+    background: white;
+    padding: 35px;
+    border-radius: 20px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    text-align: center;
+    width: 520px;
+  }
+
+  h1 { margin-bottom: 10px; }
+
+  #stats {
+    margin-bottom: 15px;
+    font-weight: bold;
+  }
+
+  .definition {
+    background: #f4f4f4;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+  }
+
+  input {
+    padding: 10px;
+    width: 60%;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+  }
+
+  button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    margin: 5px;
+  }
+
+  .guessBtn { background: #4caf50; color: white; }
+  .hintBtn { background: #ff9800; color: white; }
+  .toggleBtn { background: #2196f3; color: white; }
+
+  button:hover { opacity: 0.85; }
+
+  #message {
+    margin-top: 15px;
+    font-weight: bold;
+    font-size: 18px;
+  }
+
+  #progressBar {
+    width: 100%;
+    background: #ddd;
+    border-radius: 20px;
+    margin: 10px 0;
+  }
+
+  #progress {
+    height: 15px;
+    width: 0%;
+    background: #4caf50;
+    border-radius: 20px;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>🎯 Word Adventure</h1>
+
+  <div id="stats"></div>
+
+  <div id="progressBar">
+    <div id="progress"></div>
+  </div>
+
+  <div class="definition" id="definition"></div>
+
+  <input type="text" id="guessInput" placeholder="Type your guess..." />
+  <br>
+  <button class="guessBtn" onclick="checkGuess()">Guess</button>
+  <button class="hintBtn" onclick="giveHint()">Hint</button>
+  <button class="toggleBtn" onclick="toggleEnter()">Toggle Enter Key</button>
+
+  <div id="message"></div>
+</div>
+
+<script>
+
+const questions = [
+  { word: "cat", definition: "A small animal that says meow." },
+  { word: "sun", definition: "The bright star in the sky." },
+  { word: "car", definition: "A vehicle with four wheels." },
+  { word: "apple", definition: "A fruit that keeps the doctor away." },
+  { word: "chair", definition: "You sit on this." },
+  { word: "river", definition: "Water flowing through land." },
+  { word: "planet", definition: "A large object orbiting a star." },
+  { word: "guitar", definition: "An instrument with strings." },
+  { word: "camera", definition: "A device used to take pictures." },
+  { word: "oxygen", definition: "A gas humans breathe to survive." },
+  { word: "library", definition: "A place full of books." },
+  { word: "volcano", definition: "A mountain that erupts lava." },
+  { word: "astronomy", definition: "The study of space." },
+  { word: "philosophy", definition: "Study of deep questions about life." },
+  { word: "architecture", definition: "The art of designing buildings." }
+];
+
+let currentIndex = 0;
+let score = 0;
+let lives = 3;
+let currentQuestion;
+let enterEnabled = true;
+
+function loadQuestion() {
+  if (currentIndex >= questions.length) {
+    document.getElementById("definition").textContent =
+      "🏆 You completed the Word Adventure!";
+    document.getElementById("message").textContent =
+      "Final Score: " + score;
+    document.getElementById("guessInput").style.display = "none";
+    return;
+  }
+
+  currentQuestion = questions[currentIndex];
+  document.getElementById("definition").textContent =
+    currentQuestion.definition;
+
+  document.getElementById("guessInput").value = "";
+  document.getElementById("guessInput").focus();
+  document.getElementById("message").textContent = "";
+
+  updateStats();
+  updateProgress();
+}
+
+function checkGuess() {
+  const userGuess = document.getElementById("guessInput").value
+    .trim().toLowerCase();
+
+  if (userGuess === currentQuestion.word) {
+    score += 10;
+    document.getElementById("message").textContent = "✅ Galing mo, dahil diyan meron kang hehe!";
+    document.getElementById("message").style.color = "green";
+    currentIndex++;
+    setTimeout(loadQuestion, 800);
+  } else {
+    lives--;
+    document.getElementById("message").textContent = "❌ Walang perpekto, kaya galingan mo pa lalo!";
+    document.getElementById("message").style.color = "red";
+
+    if (lives === 0) {
+      document.getElementById("definition").textContent =
+        "💀 Learn more, bro/sis!";
+      document.getElementById("message").textContent =
+        "Final Score: " + score;
+      document.getElementById("guessInput").style.display = "none";
+    }
+  }
+
+  updateStats();
+}
+
+function giveHint() {
+  document.getElementById("message").textContent =
+    "💡 Hint: First letter is '" + currentQuestion.word[0].toUpperCase() + "'";
+  document.getElementById("message").style.color = "#ff9800";
+  score -= 2;
+  updateStats();
+}
+
+function toggleEnter() {
+  enterEnabled = !enterEnabled;
+
+  document.getElementById("message").textContent =
+    "⌨ Enter key is now " + (enterEnabled ? "ON" : "OFF");
+  document.getElementById("message").style.color = "#2196f3";
+}
+
+document.getElementById("guessInput")
+  .addEventListener("keydown", function(event) {
+    if (event.key === "Enter" && enterEnabled) {
+      checkGuess();
+    }
+});
+
+function updateStats() {
+  document.getElementById("stats").textContent =
+    "⭐ Score: " + score + 
+    " | ❤️ Lives: " + lives +
+    " | Question: " + (currentIndex + 1) + "/" + questions.length;
+}
+
+function updateProgress() {
+  const progressPercent =
+    (currentIndex / questions.length) * 100;
+  document.getElementById("progress").style.width =
+    progressPercent + "%";
+}
+
+loadQuestion();
+
+</script>
+
+</body>
+</html>
